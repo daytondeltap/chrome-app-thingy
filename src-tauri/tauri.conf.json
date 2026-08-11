@@ -1,0 +1,40 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "SCHEDULER",
+  "version": "1.0.0",
+  "identifier": "app.scheduler.desktop",
+  "build": { "frontendDist": "../ui" },
+  "app": {
+    "withGlobalTauri": true,
+    "macOSPrivateApi": true,
+    "windows": [{
+      "label": "main",
+      "title": "SCHEDULER",
+      "url": "index.html",
+      "width": 390,
+      "height": 590,
+      "minWidth": 360,
+      "minHeight": 520,
+      "resizable": true,
+      "center": true,
+      "backgroundColor": "#0b0b0b"
+    }],
+    "security": { "csp": null }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "category": "Productivity",
+    "shortDescription": "A small desktop widget for your school schedule.",
+    "longDescription": "Imports a SCHEDULER schedule file and shows your current or next class in a minimal desktop widget.",
+    "icon": ["icons/32x32.png","icons/128x128.png","icons/128x128@2x.png","icons/icon.icns","icons/icon.ico"],
+    "windows": {
+      "webviewInstallMode": { "type": "offlineInstaller", "silent": true },
+      "nsis": { "installMode": "currentUser" }
+    },
+    "macOS": {
+      "minimumSystemVersion": "10.15",
+      "dmg": { "windowSize": { "width": 660, "height": 400 } }
+    }
+  }
+}
