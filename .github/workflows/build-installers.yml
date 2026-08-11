@@ -1,0 +1,90 @@
+name: Build and release SCHEDULER
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["main"]
+
+permissions:
+  contents: write
+
+jobs:
+  windows:
+    name: Windows installer
+    runs-on: windows-latest
+    steps:
+      - name: Get source
+        uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Rust build
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+
+      - name: Install Tauri CLI
+        run: cargo install tauri-cli --version '^2' --locked
+
+      - name: Build Windows installer
+        run: cargo tauri build --bundles nsis
+
+      - name: Upload Windows installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: SCHEDULER-Windows
+          if-no-files-found: error
+          path: src-tauri/target/release/bundle/nsis/*-setup.exe
+
+  macos:
+    name: macOS universal DMG
+    runs-on: macos-14
+    steps:
+      - name: Get source
+        uses: actions/checkout@v4
+
+      - name: Install Rust targets
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-darwin,x86_64-apple-darwin
+
+      - name: Cache Rust build
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+
+      - name: Install Tauri CLI
+        run: cargo install tauri-cli --version '^2' --locked
+
+      - name: Build universal macOS DMG
+        run: cargo tauri build --bundles dmg --target universal-apple-darwin
+
+      - name: Upload macOS DMG
+        uses: actions/upload-artifact@v4
+        with:
+          name: SCHEDULER-macOS
+          if-no-files-found: error
+          path: src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg
+
+  release:
+    name: Publish installers to Releases
+    runs-on: ubuntu-latest
+    needs: [windows, macos]
+    steps:
+      - name: Download built installers
+        uses: actions/download-artifact@v4
+        with:
+          path: release-files
+          merge-multiple: true
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="autobuild-${{ github.run_number }}"
+          gh release create "$TAG" release-files/* \
+            --repo "${{ github.repository }}" \
+            --target "${{ github.sha }}" \
+            --title "SCHEDULER Auto Build #${{ github.run_number }}" \
+            --notes "Automatic Windows and macOS build of SCHEDULER from commit ${{ github.sha }}. Download the .exe on Windows or the .dmg on macOS."
