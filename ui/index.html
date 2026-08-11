@@ -1,0 +1,34 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SCHEDULER</title><link rel="stylesheet" href="control.css"></head>
+<body>
+  <main>
+    <header><div class="brand">SCHEDULER</div><div class="sub">desktop widget</div></header>
+
+    <section class="box import-box">
+      <div><b>schedule file</b><div id="fileStatus" class="muted">no schedule imported</div></div>
+      <div class="row"><button id="importButton" class="primary">import file</button><button id="clearButton" class="plain hidden">clear</button></div>
+    </section>
+
+    <section class="box preview-box">
+      <div class="caption">preview</div>
+      <div id="previewLabel" class="preview-label">NEXT CLASS</div>
+      <div id="previewFlag" class="flag hidden"></div>
+      <div id="previewName" class="preview-name">import a schedule file</div>
+      <div id="previewTime" class="preview-line">-</div>
+      <div id="previewRoom" class="preview-line">-</div>
+    </section>
+
+    <section class="box controls">
+      <div class="caption">widget</div>
+      <label>width <span id="widthValue">330px</span><input id="width" type="range" min="260" max="520" value="330"></label>
+      <label>text <span id="textValue">100%</span><input id="textScale" type="range" min="80" max="140" value="100"></label>
+      <label>opacity <span id="opacityValue">96%</span><input id="opacity" type="range" min="70" max="100" value="96"></label>
+      <label class="check"><input id="alwaysOnTop" type="checkbox" checked> keep above other windows</label>
+      <label class="check"><input id="showLabel" type="checkbox" checked> show current/next label</label>
+    </section>
+
+    <div class="row bottom"><button id="openWidget" class="primary wide">show widget</button><button id="hideWidget" class="plain">hide</button></div>
+    <div class="hint">Import the file exported by the SCHEDULER Chrome extension. Settings save automatically.</div>
+  </main>
+  <script src="common.js"></script><script src="control.js"></script>
+</body></html>
